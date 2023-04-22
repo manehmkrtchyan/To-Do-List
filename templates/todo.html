@@ -23,26 +23,12 @@
         </form>
 
         <hr>
-
-        
-            
-            
+                               
         {% for todo in todo_list %}
         <div class="ui segment">
         
             <div>
-                <h1 id="task" name = "task" class="ui big header" contenteditable="true">{{todo.id }} | {{ todo.title }}</h1>
-                 <!-- <form action="/todo" method="post">
-                    <input  id="input1" name="input1" value="">
-                    <button class="ui inverted pink button" type="submit" style="width:80px; height:40px" onclick="updateInput()">Edit</button>
-                <br> <br>
-                </form>
-                    <script>
-                    function updateInput() {
-                    var pvalue = document.getElementById("task").innerText;
-                    document.getElementById("input1").value = pvalue;
-                    }
-                </script> -->
+                <h1 id="task" name = "task" class="ui big header" contenteditable="true">{{todo.id }} | {{ todo.title }}</h1>         
             </div>
 
             {% if todo.complete == False %}
@@ -53,9 +39,6 @@
             
             <a class="ui inverted purple button" href="/update/{{ todo.id }}">Update</a>
             <a class="ui inverted violet button" href="/delete/{{ todo.id }}">Delete</a>
-
-
-            
 
             
         </div>
