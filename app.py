@@ -12,15 +12,17 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-
-
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
+
 bootstrap = Bootstrap(app)
+
 login_manager = LoginManager()
 login_manager.init_app(app)   #es toxy hishi
 login_manager.login_view = 'login'
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,19 +34,23 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
     remember = BooleanField('remember me')
+    
 
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -56,25 +62,20 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('todo'))
-
         return '<h1>Invalid username or password</h1>'
-        #return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
-
     return render_template('login.html', form=form)
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
-
+    
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-
         return redirect(url_for('login'))
-        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
-
     return render_template('signup.html', form=form)
 
 
@@ -85,23 +86,18 @@ def logout():
     return redirect(url_for('index'))
 
 
-
-
-
-
-
-
-
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     complete = db.Column(db.Boolean)
 
+    
 @app.route('/todo')
 @login_required
 def todo():
     todo_list = Todo.query.all()
     return render_template('todo.html', name=current_user.username, todo_list=todo_list)
+
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -126,19 +122,6 @@ def delete(todo_id):
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for("todo"))
-
-
-# @app.route("/edit/<int:todo_id>", methods=["POST", "GET"])
-# def edit(todo_id):
-#     if request.method == "POST":
-#         print("mtav funkcia")
-#         todo = Todo.query.filter_by(id=todo_id).first()
-#         result = todo.title
-#         print(todo.title)
-#         result = request.form.get("title")
-#         print(result)
-
-#     return render_template("todo.html", result=result, todo_list = todo)
 
 
 if __name__ == "__main__":
