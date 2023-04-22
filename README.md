@@ -1,6 +1,6 @@
 # To-Do-List
 
-To-Do App
+
 This is a simple To-Do app created using Python and Flask framework. 
 It allows users to add tasks to a list, mark them as complete, and delete them when they're done.
 Installation
